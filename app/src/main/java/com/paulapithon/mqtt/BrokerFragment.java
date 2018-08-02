@@ -1,6 +1,7 @@
 package com.paulapithon.mqtt;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -42,37 +43,64 @@ public class BrokerFragment extends Fragment {
         requestPermission();
 
         final WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
-            start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (canClick) {
-                    if (brokerOn) {
-                        getActivity().stopService(new Intent(getActivity(), BrokerService.class));
-                        text.setText(R.string.broker_off);
-                        brokerOn = false;
-                    } else {
-                        getActivity().startService(new Intent(getActivity(), BrokerService.class));
-                        text.setText(getResources().getString(R.string.broker_on, Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress())));
-                        brokerOn = true;
-                    }
+        start.setOnClickListener(v -> {
+            //if (canClick) {
+                if (brokerOn) {
+                    getActivity().stopService(new Intent(getActivity(), BrokerService.class));
+                    text.setText(R.string.broker_off);
+                    brokerOn = false;
+                } else {
+                    getActivity().startService(new Intent(getActivity(), BrokerService.class));
+                    text.setText(getResources().getString(R.string.broker_on, Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress())));
+                    brokerOn = true;
                 }
-            }
+            //}
         });
         return root;
     }
 
     private void requestPermission () {
-        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{android.Manifest.permission.ACCESS_WIFI_STATE}, CHECK_INTERNET);
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, CHECK_INTERNET);
             canClick = false;
         } else {
             canClick = true;
         }
     }
+
+//    void requestPermission2 (){
+//        int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
+//        if (ContextCompat.checkSelfPermission(context,
+//                Manifest.permission.ACCESS_WIFI_STATE)
+//                != PackageManager.PERMISSION_GRANTED) {
+//
+//            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                    Manifest.permission.ACCESS_WIFI_STATE)) {
+//
+//                // Show an expanation to the user *asynchronously* -- don't block
+//                // this thread waiting for the user's response! After the user
+//                // sees the explanation, try again to request the permission.
+//
+//            } else {
+//
+//                // No explanation needed, we can request the permission.
+//
+//                ActivityCompat.requestPermissions(this,
+//                        new String[]{Manifest.permission.ACCESS_WIFI_STATE},
+//                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+//
+//                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+//                // app-defined int constant. The callback method gets the
+//                // result of the request.
+//            }
+//        }
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

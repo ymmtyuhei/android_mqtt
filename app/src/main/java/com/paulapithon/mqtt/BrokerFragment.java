@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +34,7 @@ public class BrokerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View root =  inflater.inflate(R.layout.fragment_broker, container, false);
 
         final TextView text = root.findViewById(R.id.text_broker);
@@ -43,6 +43,9 @@ public class BrokerFragment extends Fragment {
         requestPermission();
 
         final WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        startServer(text);
+
         start.setOnClickListener(v -> {
             //if (canClick) {
                 if (brokerOn) {
@@ -50,13 +53,17 @@ public class BrokerFragment extends Fragment {
                     text.setText(R.string.broker_off);
                     brokerOn = false;
                 } else {
-                    getActivity().startService(new Intent(getActivity(), BrokerService.class));
-                    text.setText(getResources().getString(R.string.broker_on, Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress())));
-                    brokerOn = true;
+                    startServer(text);
                 }
             //}
         });
         return root;
+    }
+
+    private void startServer(TextView text){
+        getActivity().startService(new Intent(getActivity(), BrokerService.class));
+        text.setText("start server");
+        brokerOn = true;
     }
 
     private void requestPermission () {

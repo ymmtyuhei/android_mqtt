@@ -12,7 +12,6 @@ import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -41,7 +40,8 @@ public class ClientFragment extends Fragment {
 
     MqttAndroidClient mqttAndroidClient;
 
-    final String serverUri = "tcp://iot.eclipse.org:1883";
+    //final String serverUri = "tcp://iot.eclipse.org:1883";
+    final String serverUri = "tcp://localhost:1883";
 
     String clientId = "ExampleAndroidClient";
     final String subscriptionTopic = "exampleAndroidTopic";
@@ -167,13 +167,9 @@ public class ClientFragment extends Fragment {
                 }
             });
 
-            // THIS DOES NOT WORK!
-            mqttAndroidClient.subscribe(subscriptionTopic, 0, new IMqttMessageListener() {
-                @Override
-                public void messageArrived(String topic, MqttMessage message) throws Exception {
-                    // message Arrived!
-                    Log.d(TAG,"Message: " + topic + " : " + new String(message.getPayload()));
-                }
+            mqttAndroidClient.subscribe(subscriptionTopic, 0, (topic, message) -> {
+                // message Arrived!
+                addToHistory("Message: " + topic + " : " + new String(message.getPayload()));
             });
 
         } catch (MqttException ex){

@@ -16,6 +16,8 @@ import io.moquette.server.config.MemoryConfig;
 
 /**
  * Created by paula on 25/12/17.
+ *
+ * Start MQTT Broker / Port : 1887
  */
 
 public class BrokerService extends Service {
